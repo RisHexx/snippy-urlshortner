@@ -4,6 +4,12 @@ A minimal URL shortener with analytics.
 
 Snippy lets you create short links, track clicks, and manage everything from a clean dashboard — no clutter, no noise.
 
+## Preview
+
+<p align="center">
+  <img src="./app.png" alt="Snippy App Screenshot" width="700" />
+</p>
+
 ---
 
 ## Features
@@ -35,13 +41,3 @@ Snippy lets you create short links, track clicks, and manage everything from a c
 - Google OAuth 2.0
 
 ---
-
-## Pages
-
-- Landing (single screen, non-scrollable)
-- Dashboard (create short links)
-- Library (all user links)
-- Analytics (per-link traffic)
-
----
-
