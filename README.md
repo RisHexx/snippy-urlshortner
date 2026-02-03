@@ -2,7 +2,7 @@
 
 A minimal URL shortener with analytics.
 
-Snippy lets you create short links, track clicks, and manage everything from a clean dashboard — no clutter, no noise.
+Snippy lets you create short links, track clicks, and manage everything from a clean dashboard.
 
 ## Preview
 
