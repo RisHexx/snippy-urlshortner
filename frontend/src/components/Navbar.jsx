@@ -51,6 +51,7 @@ function Navbar() {
                   <img
                     src={user.avatar}
                     alt={user.name}
+                    referrerPolicy="no-referrer"
                     className="w-9 h-9 rounded-full border-2 border-primary-200"
                   />
                 )}

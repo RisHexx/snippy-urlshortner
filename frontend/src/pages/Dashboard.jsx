@@ -131,7 +131,7 @@ function Dashboard() {
           <div className="mb-3">
             <div className="flex">
               <span className="inline-flex items-center px-3.5 bg-gray-50 border-2 border-r-0 border-gray-200 rounded-l-xl text-gray-400 text-sm">
-                snippy.co/
+                Custom Url
               </span>
               <input
                 type="text"
