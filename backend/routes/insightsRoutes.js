@@ -1,10 +1,10 @@
 const express = require('express');
-const { getURLAnalytics } = require('../controllers/analyticsController');
+const { getAIInsights } = require('../controllers/insightsController');
 const { protect } = require('../middleware/auth');
 const { apiLimiter } = require('../middleware/rateLimit');
 
 const router = express.Router();
 
-router.get('/:urlId', protect, apiLimiter, getURLAnalytics);
+router.get('/:urlId', protect, apiLimiter, getAIInsights);
 
 module.exports = router;

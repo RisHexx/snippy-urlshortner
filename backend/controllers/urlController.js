@@ -210,19 +210,32 @@ const redirectToURL = async (req, res) => {
       `);
     }
 
-    // Track click
-    await ClickAnalytics.create({
-      shortUrl: url._id,
-      referrer: req.get('Referrer') || 'Direct',
-      userAgent: req.get('User-Agent') || '',
-      ipAddress: req.ip || req.connection.remoteAddress || '',
-    });
+    // Unique device tracking via 1-hour cookie
+    const cookieName = `visited_${shortCode}`;
+    const alreadyVisited = req.cookies && req.cookies[cookieName];
 
-    // Increment click count
-    url.clickCount += 1;
-    await url.save();
+    if (!alreadyVisited) {
+      // Track click only if no cookie exists
+      await ClickAnalytics.create({
+        shortUrl: url._id,
+        referrer: req.get('Referrer') || 'Direct',
+        userAgent: req.get('User-Agent') || '',
+        ipAddress: req.ip || req.connection.remoteAddress || '',
+      });
 
-    // Redirect to original URL
+      // Increment click count
+      url.clickCount += 1;
+      await url.save();
+
+      // Set 1-hour cookie to prevent duplicate counting
+      res.cookie(cookieName, '1', {
+        maxAge: 60 * 60 * 1000, // 1 hour
+        httpOnly: true,
+        sameSite: 'lax',
+      });
+    }
+
+    // Always redirect regardless of cookie
     res.redirect(url.originalUrl);
   } catch (error) {
     console.error('Redirect error:', error);

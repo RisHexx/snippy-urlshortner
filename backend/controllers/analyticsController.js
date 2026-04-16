@@ -68,6 +68,79 @@ const getURLAnalytics = async (req, res) => {
       .limit(10)
       .select('clickedAt referrer');
 
+    // --- Enhanced Analytics ---
+
+    // Referrer breakdown
+    const referrerBreakdown = await ClickAnalytics.aggregate([
+      { $match: { shortUrl: url._id } },
+      { $group: { _id: '$referrer', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 8 },
+    ]);
+
+    // Device breakdown (parsed from User-Agent)
+    const allClicks = await ClickAnalytics.find({ shortUrl: url._id }).select('userAgent');
+    const deviceCounts = { Desktop: 0, Mobile: 0, Tablet: 0 };
+    allClicks.forEach((click) => {
+      const ua = (click.userAgent || '').toLowerCase();
+      if (/tablet|ipad/i.test(ua)) {
+        deviceCounts.Tablet++;
+      } else if (/mobile|android|iphone/i.test(ua)) {
+        deviceCounts.Mobile++;
+      } else {
+        deviceCounts.Desktop++;
+      }
+    });
+
+    // Hourly traffic distribution (0-23)
+    const hourlyRaw = await ClickAnalytics.aggregate([
+      { $match: { shortUrl: url._id } },
+      { $group: { _id: { $hour: '$clickedAt' }, clicks: { $sum: 1 } } },
+      { $sort: { _id: 1 } },
+    ]);
+
+    // Fill all 24 hours
+    const hourlyDistribution = [];
+    for (let h = 0; h < 24; h++) {
+      const found = hourlyRaw.find((d) => d._id === h);
+      hourlyDistribution.push({ hour: h, clicks: found ? found.clicks : 0 });
+    }
+
+    // Weekly comparison: this week vs last week
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0=Sun
+    const thisWeekStart = new Date(now);
+    thisWeekStart.setDate(now.getDate() - dayOfWeek);
+    thisWeekStart.setHours(0, 0, 0, 0);
+
+    const lastWeekStart = new Date(thisWeekStart);
+    lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+    const lastWeekEnd = new Date(thisWeekStart);
+
+    const thisWeekClicks = await ClickAnalytics.aggregate([
+      { $match: { shortUrl: url._id, clickedAt: { $gte: thisWeekStart } } },
+      { $group: { _id: { $dayOfWeek: '$clickedAt' }, clicks: { $sum: 1 } } },
+      { $sort: { _id: 1 } },
+    ]);
+
+    const lastWeekClicks = await ClickAnalytics.aggregate([
+      { $match: { shortUrl: url._id, clickedAt: { $gte: lastWeekStart, $lt: lastWeekEnd } } },
+      { $group: { _id: { $dayOfWeek: '$clickedAt' }, clicks: { $sum: 1 } } },
+      { $sort: { _id: 1 } },
+    ]);
+
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const weeklyComparison = dayNames.map((name, index) => {
+      const mongoDay = index + 1; // MongoDB: 1=Sun, 7=Sat
+      const thisW = thisWeekClicks.find((d) => d._id === mongoDay);
+      const lastW = lastWeekClicks.find((d) => d._id === mongoDay);
+      return {
+        day: name,
+        thisWeek: thisW ? thisW.clicks : 0,
+        lastWeek: lastW ? lastW.clicks : 0,
+      };
+    });
+
     res.json({
       urlInfo: {
         _id: url._id,
@@ -79,6 +152,10 @@ const getURLAnalytics = async (req, res) => {
       totalClicks,
       clicksByDay: filledClicksByDay,
       recentClicks,
+      referrerBreakdown,
+      deviceBreakdown: deviceCounts,
+      hourlyDistribution,
+      weeklyComparison,
     });
   } catch (error) {
     console.error('Get analytics error:', error);

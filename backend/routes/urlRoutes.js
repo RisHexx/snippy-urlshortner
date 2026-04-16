@@ -6,15 +6,16 @@ const {
   deleteURL,
 } = require('../controllers/urlController');
 const { protect } = require('../middleware/auth');
+const { createUrlLimiter, apiLimiter } = require('../middleware/rateLimit');
 
 const router = express.Router();
 
 router.route('/')
-  .post(protect, createShortURL)
-  .get(protect, getUserURLs);
+  .post(protect, createUrlLimiter, createShortURL)
+  .get(protect, apiLimiter, getUserURLs);
 
 router.route('/:id')
-  .get(protect, getURL)
-  .delete(protect, deleteURL);
+  .get(protect, apiLimiter, getURL)
+  .delete(protect, apiLimiter, deleteURL);
 
 module.exports = router;

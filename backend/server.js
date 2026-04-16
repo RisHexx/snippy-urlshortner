@@ -8,6 +8,7 @@ dotenv.config();
 
 const connectDB = require('./config/db');
 const passport = require('./config/passport');
+const { globalLimiter, redirectLimiter } = require('./middleware/rateLimit');
 
 // Connect to database
 connectDB();
@@ -24,14 +25,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(passport.initialize());
 
+// Apply global rate limiter
+app.use(globalLimiter);
+
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/urls', require('./routes/urlRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));
+app.use('/api/insights', require('./routes/insightsRoutes'));
 
 // Redirect route (must be last)
 const { redirectToURL } = require('./controllers/urlController');
-app.get('/:shortCode', redirectToURL);
+app.get('/:shortCode', redirectLimiter, redirectToURL);
 
 // Health check
 app.get('/api/health', (req, res) => {
