@@ -1,6 +1,7 @@
 const { nanoid } = require('nanoid');
 const ShortURL = require('../models/ShortURL');
 const ClickAnalytics = require('../models/ClickAnalytics');
+const { getCache, setCache, deleteCache, deleteCachePattern } = require('../config/redis');
 
 // @desc    Create short URL
 // @route   POST /api/urls
@@ -53,6 +54,9 @@ const createShortURL = async (req, res) => {
       expiresAt: expiresAt ? new Date(expiresAt) : null,
     });
 
+    // Invalidate user's URL list cache
+    await deleteCache(`user_urls:${req.user._id}`);
+
     res.status(201).json({
       _id: shortUrl._id,
       originalUrl: shortUrl.originalUrl,
@@ -75,6 +79,13 @@ const createShortURL = async (req, res) => {
 // @access  Private
 const getUserURLs = async (req, res) => {
   try {
+    // Check Redis cache first
+    const cacheKey = `user_urls:${req.user._id}`;
+    const cached = await getCache(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
+
     const urls = await ShortURL.find({ user: req.user._id })
       .sort({ createdAt: -1 });
 
@@ -89,6 +100,9 @@ const getUserURLs = async (req, res) => {
       status: url.status,
       createdAt: url.createdAt,
     }));
+
+    // Cache for 5 minutes
+    await setCache(cacheKey, formattedUrls, 300);
 
     res.json(formattedUrls);
   } catch (error) {
@@ -145,6 +159,12 @@ const deleteURL = async (req, res) => {
     // Delete associated analytics
     await ClickAnalytics.deleteMany({ shortUrl: url._id });
 
+    // Invalidate all related caches
+    await deleteCache(`url:${url.shortCode}`);
+    await deleteCache(`user_urls:${req.user._id}`);
+    await deleteCache(`analytics:${url._id}`);
+    await deleteCache(`insights:${url._id}`);
+
     await url.deleteOne();
 
     res.json({ message: 'URL deleted successfully' });
@@ -161,29 +181,68 @@ const redirectToURL = async (req, res) => {
   try {
     const { shortCode } = req.params;
 
-    const url = await ShortURL.findOne({ shortCode });
+    // Check Redis cache first for fast redirect
+    const cachedUrl = await getCache(`url:${shortCode}`);
+    let url;
 
-    if (!url) {
-      return res.status(404).send(`
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <title>Link Not Found</title>
-            <style>
-              body { font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f9ff; }
-              .container { text-align: center; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-              h1 { color: #0ea5e9; }
-              p { color: #64748b; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <h1>Link Not Found</h1>
-              <p>The short link you're looking for doesn't exist.</p>
-            </div>
-          </body>
-        </html>
-      `);
+    if (cachedUrl) {
+      // We have the URL data cached, but need a full Mongoose doc for methods
+      url = await ShortURL.findOne({ shortCode });
+      if (!url) {
+        // Cache is stale — clean up
+        await deleteCache(`url:${shortCode}`);
+        return res.status(404).send(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>Link Not Found</title>
+              <style>
+                body { font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f9ff; }
+                .container { text-align: center; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                h1 { color: #0ea5e9; }
+                p { color: #64748b; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <h1>Link Not Found</h1>
+                <p>The short link you're looking for doesn't exist.</p>
+              </div>
+            </body>
+          </html>
+        `);
+      }
+    } else {
+      url = await ShortURL.findOne({ shortCode });
+
+      if (!url) {
+        return res.status(404).send(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>Link Not Found</title>
+              <style>
+                body { font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f9ff; }
+                .container { text-align: center; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                h1 { color: #0ea5e9; }
+                p { color: #64748b; }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <h1>Link Not Found</h1>
+                <p>The short link you're looking for doesn't exist.</p>
+              </div>
+            </body>
+          </html>
+        `);
+      }
+
+      // Cache the URL mapping for 1 hour
+      await setCache(`url:${shortCode}`, {
+        originalUrl: url.originalUrl,
+        expiresAt: url.expiresAt,
+      }, 3600);
     }
 
     // Check if link is expired
@@ -226,6 +285,10 @@ const redirectToURL = async (req, res) => {
       // Increment click count
       url.clickCount += 1;
       await url.save();
+
+      // Invalidate analytics & user URL caches so fresh data is fetched
+      await deleteCache(`analytics:${url._id}`);
+      await deleteCache(`user_urls:${url.user}`);
 
       // Set 1-hour cookie to prevent duplicate counting
       res.cookie(cookieName, '1', {

@@ -7,11 +7,13 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const connectDB = require('./config/db');
+const { connectRedis } = require('./config/redis');
 const passport = require('./config/passport');
 const { globalLimiter, redirectLimiter } = require('./middleware/rateLimit');
 
-// Connect to database
+// Connect to database & Redis
 connectDB();
+connectRedis();
 
 const app = express();
 

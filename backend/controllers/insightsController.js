@@ -1,5 +1,6 @@
 const ClickAnalytics = require('../models/ClickAnalytics');
 const ShortURL = require('../models/ShortURL');
+const { getCache, setCache } = require('../config/redis');
 
 // @desc    Get AI insights for a URL
 // @route   GET /api/insights/:urlId
@@ -7,6 +8,13 @@ const ShortURL = require('../models/ShortURL');
 const getAIInsights = async (req, res) => {
   try {
     const { urlId } = req.params;
+
+    // Check Redis cache first (TTL: 15 min — saves Groq API calls)
+    const cacheKey = `insights:${urlId}`;
+    const cached = await getCache(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
 
     // Verify URL belongs to user
     const url = await ShortURL.findOne({
@@ -144,7 +152,7 @@ Respond with EXACTLY this format (use these emoji headers, no markdown formattin
     const groqData = await groqResponse.json();
     const insights = groqData.choices?.[0]?.message?.content || 'Unable to generate insights.';
 
-    res.json({
+    const responseData = {
       insights,
       metadata: {
         totalClicks,
@@ -153,7 +161,12 @@ Respond with EXACTLY this format (use these emoji headers, no markdown formattin
         topReferrer: referrerBreakdown[0]?._id || 'N/A',
         dominantDevice: Object.entries(deviceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A',
       },
-    });
+    };
+
+    // Cache AI insights for 15 minutes (avoids redundant Groq API calls)
+    await setCache(cacheKey, responseData, 900);
+
+    res.json(responseData);
   } catch (error) {
     console.error('Get AI insights error:', error);
     res.status(500).json({ message: 'Server error' });

@@ -1,5 +1,6 @@
 const ClickAnalytics = require('../models/ClickAnalytics');
 const ShortURL = require('../models/ShortURL');
+const { getCache, setCache } = require('../config/redis');
 
 // @desc    Get analytics for a URL
 // @route   GET /api/analytics/:urlId
@@ -7,6 +8,13 @@ const ShortURL = require('../models/ShortURL');
 const getURLAnalytics = async (req, res) => {
   try {
     const { urlId } = req.params;
+
+    // Check Redis cache first (TTL: 2 min — short for freshness)
+    const cacheKey = `analytics:${urlId}`;
+    const cached = await getCache(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
 
     // Verify URL belongs to user
     const url = await ShortURL.findOne({ 
@@ -141,7 +149,7 @@ const getURLAnalytics = async (req, res) => {
       };
     });
 
-    res.json({
+    const responseData = {
       urlInfo: {
         _id: url._id,
         originalUrl: url.originalUrl,
@@ -156,7 +164,12 @@ const getURLAnalytics = async (req, res) => {
       deviceBreakdown: deviceCounts,
       hourlyDistribution,
       weeklyComparison,
-    });
+    };
+
+    // Cache for 2 minutes
+    await setCache(cacheKey, responseData, 120);
+
+    res.json(responseData);
   } catch (error) {
     console.error('Get analytics error:', error);
     res.status(500).json({ message: 'Server error' });
