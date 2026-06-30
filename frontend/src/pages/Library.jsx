@@ -63,21 +63,21 @@ function Library() {
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setDeleteModal({ open: false, id: null })}
           />
-          <div className="relative bg-white rounded-xl p-6 w-full max-w-sm shadow-xl animate-[fadeInUp_0.2s_ease-out]">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Delete Link</h3>
-            <p className="text-gray-500 text-sm mb-6">
+          <div className="relative bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl border border-sand-200 animate-[fadeInUp_0.2s_ease-out]">
+            <h3 className="text-lg font-semibold text-ink-900 mb-2">Delete Link</h3>
+            <p className="text-slate-500 text-sm mb-6">
               Are you sure you want to delete this link? This action cannot be undone.
             </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setDeleteModal({ open: false, id: null })}
-                className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-sand-100 rounded-lg transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 rounded-lg transition-colors shadow-[0_10px_20px_-14px_rgba(249,115,22,0.8)]"
               >
                 Delete
               </button>
@@ -88,17 +88,17 @@ function Library() {
 
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <h1 className="text-xl font-semibold text-gray-800 tracking-tight mb-6">
+        <h1 className="text-xl font-semibold text-ink-900 tracking-tight mb-6">
           My Links
         </h1>
 
         {/* Empty State */}
         {urls.length === 0 ? (
-          <div className="bg-white border-2 border-gray-100 rounded-xl p-10 text-center">
-            <p className="text-gray-400 mb-4">No links yet</p>
+          <div className="bg-white border border-sand-200 rounded-2xl p-10 text-center shadow-[0_16px_40px_-28px_rgba(15,23,42,0.2)]">
+            <p className="text-slate-400 mb-4">No links yet</p>
             <Link
               to="/dashboard"
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium rounded-full transition-colors"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold rounded-full transition-colors shadow-[0_10px_20px_-14px_rgba(249,115,22,0.8)]"
             >
               Create Your First Link
             </Link>
@@ -109,7 +109,7 @@ function Library() {
             {urls.map((url) => (
               <div
                 key={url._id}
-                className="bg-white border-2 border-gray-100 rounded-xl p-4 hover:border-gray-200 transition-colors"
+                className="bg-white border border-sand-200 rounded-2xl p-4 hover:border-sand-300 transition-colors shadow-[0_12px_30px_-22px_rgba(15,23,42,0.18)]"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   {/* Link Info */}
@@ -119,7 +119,7 @@ function Library() {
                         href={url.shortUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-primary-500 font-medium hover:underline truncate text-sm"
+                        className="text-primary-600 font-semibold hover:underline truncate text-sm"
                       >
                         {url.shortUrl.replace('http://', '').replace('https://', '')}
                       </a>
@@ -133,27 +133,27 @@ function Library() {
                         {url.status}
                       </span>
                     </div>
-                    <p className="text-gray-400 text-xs truncate">{url.originalUrl}</p>
+                    <p className="text-slate-400 text-xs truncate">{url.originalUrl}</p>
                     {url.expiresAt && (
-                      <p className="text-gray-400 text-xs mt-1">
+                      <p className="text-slate-400 text-xs mt-1">
                         Expires : {formatDate(url.expiresAt)}
                       </p>
                     )}
                   </div>
 
                   {/* Stats */}
-                  <div className="flex items-center gap-4 text-xs text-gray-400 sm:text-right">
+                  <div className="flex items-center gap-4 text-xs text-slate-400 sm:text-right">
                     <span>{url.clickCount} clicks</span>
                     <span>{formatDate(url.createdAt)}</span>
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-1 sm:border-l sm:border-gray-100 sm:pl-4">
+                  <div className="flex items-center gap-1 sm:border-l sm:border-sand-200 sm:pl-4">
                     <CopyButton text={url.shortUrl} className="!py-1.5 !px-2.5 text-xs" />
                     
                     <Link
                       to={`/analytics/${url._id}`}
-                      className="p-1.5 text-gray-400 hover:text-primary-500 hover:bg-gray-50 rounded-lg transition-colors"
+                      className="p-1.5 text-slate-400 hover:text-primary-600 hover:bg-sand-100 rounded-lg transition-colors"
                       title="Analytics"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,7 +164,7 @@ function Library() {
                     <button
                       onClick={() => setDeleteModal({ open: true, id: url._id })}
                       disabled={deleteLoading === url._id}
-                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                      className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                       title="Delete"
                     >
                       {deleteLoading === url._id ? (

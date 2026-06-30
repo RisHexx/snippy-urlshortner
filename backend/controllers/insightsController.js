@@ -1,6 +1,5 @@
 const ClickAnalytics = require('../models/ClickAnalytics');
 const ShortURL = require('../models/ShortURL');
-const { getCache, setCache } = require('../config/redis');
 
 // @desc    Get AI insights for a URL
 // @route   GET /api/insights/:urlId
@@ -8,13 +7,6 @@ const { getCache, setCache } = require('../config/redis');
 const getAIInsights = async (req, res) => {
   try {
     const { urlId } = req.params;
-
-    // Check Redis cache first (TTL: 15 min — saves Groq API calls)
-    const cacheKey = `insights:${urlId}`;
-    const cached = await getCache(cacheKey);
-    if (cached) {
-      return res.json(cached);
-    }
 
     // Verify URL belongs to user
     const url = await ShortURL.findOne({
@@ -100,25 +92,22 @@ DATA:
 - Sources: ${topReferrers || 'No data'}
 - Devices: ${deviceSummary || 'No data'}
 
-Respond with EXACTLY this format (use these emoji headers, no markdown formatting):
+Respond with EXACTLY this format in plain text, no emojis and no markdown formatting:
 
-📊 Performance Summary
+Performance Summary
 [1-2 sentences with specific numbers about overall performance]
 
-📈 Traffic Trends  
+Traffic Trends
 [1-2 sentences about growth/decline pattern with numbers]
 
-🌐 Traffic Sources
+Traffic Sources
 [1-2 sentences about referrer distribution, name top source with %]
 
-📱 Device Split
+Device Split
 [1 sentence about device distribution with percentages]
 
-⏰ Best Times
-[1 sentence naming the peak hour and best day]
-
-🎯 Actions
-[Exactly 3 short bullet points starting with "•" - specific, actionable tips based on the data]`;
+Best Times
+[1 sentence naming the peak hour and best day]`;
 
     // Call Groq API
     const groqApiKey = process.env.GROQ_API_KEY;
@@ -162,9 +151,6 @@ Respond with EXACTLY this format (use these emoji headers, no markdown formattin
         dominantDevice: Object.entries(deviceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A',
       },
     };
-
-    // Cache AI insights for 15 minutes (avoids redundant Groq API calls)
-    await setCache(cacheKey, responseData, 900);
 
     res.json(responseData);
   } catch (error) {

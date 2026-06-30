@@ -49,14 +49,14 @@ function Dashboard() {
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      className={`flex items-center gap-2.5 px-4 py-2 rounded-xl border-2 transition-all ${
+      className={`flex items-center gap-2.5 px-4 py-2 rounded-xl border transition-all ${
         checked 
-          ? 'bg-primary-50 border-primary-300 text-primary-700' 
-          : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300'
+          ? 'bg-white border-primary-200 text-primary-700 shadow-sm' 
+          : 'bg-white border-sand-200 text-slate-500 hover:border-sand-300'
       }`}
     >
-      <span className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
-        checked ? 'bg-primary-500 border-primary-500' : 'border-gray-300'
+      <span className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+        checked ? 'bg-primary-500 border-primary-500' : 'border-sand-300'
       }`}>
         {checked && (
           <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -72,10 +72,10 @@ function Dashboard() {
     <div className="min-h-[calc(100vh-64px)] flex flex-col items-center pt-16 sm:pt-20 px-4 pb-12">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl sm:text-4xl font-semibold text-gray-800 tracking-tight mb-2">
+        <h1 className="text-3xl sm:text-4xl font-semibold text-ink-900 tracking-tight mb-2">
           Shorten Your Links
         </h1>
-        <p className="text-gray-500">
+        <p className="text-slate-600">
           Paste a long URL and get a short link instantly
         </p>
       </div>
@@ -91,12 +91,12 @@ function Dashboard() {
             onChange={handleChange}
             placeholder="Paste your long URL here..."
             required
-            className="flex-1 px-4 py-3.5 text-base border-2 border-gray-200 rounded-xl focus:border-primary-400 outline-none transition-colors bg-white placeholder:text-gray-400"
+            className="flex-1 px-4 py-3.5 text-base border border-sand-200 rounded-xl focus:border-primary-400 outline-none transition-colors bg-white/90 placeholder:text-slate-400"
           />
           <button
             type="submit"
             disabled={loading || !formData.originalUrl}
-            className="px-6 py-3.5 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-6 py-3.5 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-xl transition-colors shadow-[0_14px_30px_-18px_rgba(249,115,22,0.8)] disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -130,7 +130,7 @@ function Dashboard() {
         {showAlias && (
           <div className="mb-3">
             <div className="flex">
-              <span className="inline-flex items-center px-3.5 bg-gray-50 border-2 border-r-0 border-gray-200 rounded-l-xl text-gray-400 text-sm">
+              <span className="inline-flex items-center px-3.5 bg-sand-50 border border-r-0 border-sand-200 rounded-l-xl text-slate-500 text-sm">
                 Custom Url
               </span>
               <input
@@ -142,10 +142,10 @@ function Dashboard() {
                 pattern="[a-zA-Z0-9_-]+"
                 minLength={3}
                 maxLength={20}
-                className="flex-1 min-w-0 px-3.5 py-2.5 border-2 border-gray-200 rounded-r-xl focus:border-primary-400 outline-none transition-colors text-sm"
+                className="flex-1 min-w-0 px-3.5 py-2.5 border border-sand-200 rounded-r-xl focus:border-primary-400 outline-none transition-colors text-sm"
               />
             </div>
-            <p className="mt-1.5 text-xs text-gray-400 pl-1">3-20 characters: letters, numbers, hyphens</p>
+            <p className="mt-1.5 text-xs text-slate-400 pl-1">3-20 characters: letters, numbers, hyphens</p>
           </div>
         )}
 
@@ -162,35 +162,35 @@ function Dashboard() {
                 dateFormat="MMM d, yyyy h:mm aa"
                 minDate={new Date()}
                 placeholderText="Select expiration date & time"
-                className="w-full px-3.5 py-2.5 border-2 border-gray-200 rounded-xl focus:border-primary-400 outline-none transition-colors text-sm text-gray-600 bg-white"
+                className="w-full px-3.5 py-2.5 border border-sand-200 rounded-xl focus:border-primary-400 outline-none transition-colors text-sm text-slate-600 bg-white"
                 calendarClassName="shadow-lg border-0 rounded-xl"
                 wrapperClassName="w-full"
                 popperClassName="react-datepicker-popper"
                 popperPlacement="bottom-start"
               />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
             </div>
-            <p className="mt-1.5 text-xs text-gray-400 pl-1">Link will expire after this date</p>
+            <p className="mt-1.5 text-xs text-slate-400 pl-1">Link will expire after this date</p>
           </div>
         )}
       </form>
 
       {/* Result */}
       {result && (
-        <div className="w-full max-w-2xl mt-6 p-5 border-2 border-gray-100 rounded-2xl bg-white">
-          <p className="text-sm font-medium text-gray-500 mb-4">Link created</p>
+        <div className="w-full max-w-2xl mt-6 p-5 border border-sand-200 rounded-2xl bg-white shadow-[0_16px_40px_-28px_rgba(15,23,42,0.25)]">
+          <p className="text-sm font-medium text-slate-500 mb-4">Link created</p>
 
           {/* Short URL Display */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 p-3.5 bg-gray-50 rounded-xl mb-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 p-3.5 bg-sand-50 rounded-xl mb-4">
             <a
               href={result.shortUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 text-primary-600 font-medium hover:underline break-all"
+              className="flex-1 text-primary-600 font-semibold hover:underline break-all"
             >
               {result.shortUrl}
             </a>
@@ -198,12 +198,12 @@ function Dashboard() {
           </div>
 
           {/* Original URL */}
-          <p className="text-sm text-gray-400 mb-4 break-all truncate">
+          <p className="text-sm text-slate-400 mb-4 break-all truncate">
             {result.originalUrl}
           </p>
 
           {/* QR Code */}
-          <div className="flex justify-center pt-4 border-t border-gray-100">
+          <div className="flex justify-center pt-4 border-t border-sand-200">
             <QRCode url={result.shortUrl} size={120} />
           </div>
         </div>

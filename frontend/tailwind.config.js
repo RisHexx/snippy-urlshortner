@@ -6,7 +6,27 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"Space Grotesk"', 'sans-serif'],
+      },
       colors: {
+        ink: {
+          900: '#0b1220',
+          800: '#111827',
+          700: '#1f2937',
+        },
+        sand: {
+          50: '#fffaf4',
+          100: '#fdf0e6',
+          200: '#f7dfcc',
+          300: '#f1cbb0',
+          400: '#e3b18b',
+          500: '#c9926a',
+          600: '#ad7450',
+          700: '#8e5c3e',
+          800: '#744a34',
+          900: '#5a3a2a',
+        },
         primary: {
           50: '#fff7ed',
           100: '#ffedd5',

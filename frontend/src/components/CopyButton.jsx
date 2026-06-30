@@ -18,7 +18,7 @@ function CopyButton({ text, className = '' }) {
   return (
     <button
       onClick={handleCopy}
-      className={`p-2 rounded-lg text-gray-400 hover:text-primary-500 hover:bg-gray-50 transition-colors ${
+      className={`p-2 rounded-lg text-slate-400 hover:text-primary-600 hover:bg-sand-100 transition-colors ${
         copied ? 'text-primary-500' : ''
       } ${className}`}
       title="Copy"

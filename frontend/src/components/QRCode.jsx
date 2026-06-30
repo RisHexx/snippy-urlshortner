@@ -39,10 +39,10 @@ function QRCode({ url, size = 150 }) {
 
   return (
     <div className="flex flex-col items-center gap-3">
-      <canvas ref={canvasRef} className="rounded-lg shadow-sm" />
+      <canvas ref={canvasRef} className="rounded-xl border border-sand-200 shadow-sm bg-white" />
       <button
         onClick={downloadQR}
-        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+        className="flex items-center gap-2 px-3 py-1.5 text-sm font-semibold text-primary-600 hover:bg-sand-100 rounded-lg transition-colors"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
