@@ -1,0 +1,26 @@
+services:
+  backend:
+    image: yourdockerhubusername/snippy-backend:latest
+    container_name: backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend.env
+    networks:
+      - snippy-net
+
+  frontend:
+    image: yourdockerhubusername/snippy-frontend:latest
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - snippy-net
+
+networks:
+  snippy-net:
+    driver: bridge
