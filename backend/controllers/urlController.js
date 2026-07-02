@@ -227,9 +227,7 @@ const redirectToURL = async (req, res) => {
       url.clickCount += 1;
       await url.save();
 
-      // Invalidate analytics & user URL caches so fresh data is fetched
-      await deleteCache(`analytics:${url._id}`);
-      await deleteCache(`user_urls:${url.user}`);
+
 
       // Set 1-hour cookie to prevent duplicate counting
       res.cookie(cookieName, '1', {

@@ -1,17 +1,17 @@
 services:
   backend:
-    image: yourdockerhubusername/snippy-backend:latest
+    image: rishex/snippy-backend:latest
     container_name: backend
     restart: unless-stopped
     ports:
       - "5000:5000"
     env_file:
-      - ./backend.env
+      - ./.env
     networks:
       - snippy-net
 
   frontend:
-    image: yourdockerhubusername/snippy-frontend:latest
+    image: rishex/snippy-frontend:latest
     container_name: frontend
     restart: unless-stopped
     ports:

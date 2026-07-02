@@ -15,7 +15,8 @@ connectDB();
 
 const app = express();
 
-// Middleware
+// Trust proxy (needed when behind nginx/reverse proxy)
+app.set('trust proxy', 1);
 app.use(cors({
   origin: process.env.FRONTEND_URL,
   credentials: true,
