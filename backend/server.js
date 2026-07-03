@@ -37,7 +37,7 @@ app.use('/api/insights', require('./routes/insightsRoutes'));
 
 // Redirect route (must be last)
 const { redirectToURL } = require('./controllers/urlController');
-app.get('/:shortCode', redirectLimiter, redirectToURL);
+app.get('/s/:shortCode', redirectLimiter, redirectToURL);
 
 // Health check
 app.get('/api/health', (req, res) => {
