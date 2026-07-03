@@ -32,16 +32,16 @@ function Landing() {
 
           </div>
 
-          <div className="mt-10 grid grid-cols-3 gap-4 text-xs text-slate-500 max-w-md">
-            <div className="rounded-lg border border-sand-200 bg-white/80 px-3 py-2 text-center">Custom aliases</div>
-            <div className="rounded-lg border border-sand-200 bg-white/80 px-3 py-2 text-center">AI Summary</div>
-            <div className="rounded-lg border border-sand-200 bg-white/80 px-3 py-2 text-center">Live Dashboard</div>
+          <div className="mt-10 flex flex-wrap sm:grid sm:grid-cols-3 gap-3 text-xs text-slate-500 max-w-md">
+            <div className="flex-1 rounded-lg border border-sand-200 bg-white/80 px-3 py-2 text-center whitespace-nowrap">Custom aliases</div>
+            <div className="flex-1 rounded-lg border border-sand-200 bg-white/80 px-3 py-2 text-center whitespace-nowrap">AI Summary</div>
+            <div className="flex-1 rounded-lg border border-sand-200 bg-white/80 px-3 py-2 text-center whitespace-nowrap">Live Dashboard</div>
           </div>
         </div>
 
-        <div className="bg-white/90 border border-sand-200 rounded-2xl shadow-[0_20px_50px_-35px_rgba(15,23,42,0.4)] p-6 sm:p-8">
-          <div className="flex items-center gap-3 mb-6">
-            <img src="/logo.png" alt="Snippy" className="h-12" />
+        <div className="bg-white/90 border border-sand-200 rounded-2xl shadow-[0_20px_50px_-35px_rgba(15,23,42,0.4)] p-6 sm:p-8 mt-10 lg:mt-0">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
+            <img src="/logo.png" alt="Snippy" className="h-10 sm:h-12" />
             <div>
               <p className="text-sm font-semibold text-ink-900">Snippy Shortner</p>
               <p className="text-xs text-slate-500">Clean, trackable links</p>
@@ -49,21 +49,21 @@ function Landing() {
           </div>
 
           <div className="space-y-4">
-            <div className="rounded-xl border border-sand-200 bg-sand-50 px-4 py-3 text-sm text-slate-600">
+            <div className="rounded-xl border border-sand-200 bg-sand-50 px-4 py-3 text-sm text-slate-600 break-all">
               https://very-long-link.example.com/articles/marketing
             </div>
-            <div className="flex items-center justify-between rounded-xl border border-sand-200 bg-white px-4 py-3">
-              <span className="text-sm font-semibold text-primary-600">snippy.rishabhkanojiya.in/customname</span>
-              <span className="rounded-full bg-sand-100 px-3 py-1 text-[11px] font-semibold text-slate-500">Copied</span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 rounded-xl border border-sand-200 bg-white px-4 py-3">
+              <span className="text-sm font-semibold text-primary-600 break-all mr-2">snippy.rishabhkanojiya.in/customname</span>
+              <span className="shrink-0 rounded-full bg-sand-100 px-3 py-1 text-[11px] font-semibold text-slate-500 self-start sm:self-auto">Copied</span>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl border border-sand-200 bg-white px-4 py-3">
                 <p className="text-[11px] uppercase tracking-widest text-slate-400">Clicks</p>
-                <p className="text-xl font-semibold text-ink-900 mt-2">2,481</p>
+                <p className="text-xl sm:text-2xl font-semibold text-ink-900 mt-1 sm:mt-2">2,481</p>
               </div>
               <div className="rounded-xl border border-sand-200 bg-white px-4 py-3">
                 <p className="text-[11px] uppercase tracking-widest text-slate-400">Top source</p>
-                <p className="text-xl font-semibold text-ink-900 mt-2">Desktop</p>
+                <p className="text-xl sm:text-2xl font-semibold text-ink-900 mt-1 sm:mt-2 truncate">Desktop</p>
               </div>
             </div>
           </div>
