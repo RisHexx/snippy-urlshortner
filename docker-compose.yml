@@ -3,8 +3,6 @@ services:
     image: rishex/snippy-backend:latest
     container_name: backend
     restart: unless-stopped
-    ports:
-      - "5000:5000"
     env_file:
       - ./.env
     networks:
