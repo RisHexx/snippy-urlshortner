@@ -13,7 +13,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     // Don't redirect for auth check endpoint - 401 is expected for non-logged-in users
-    const isAuthCheck = error.config?.url === '/api/auth/me'
+    const isAuthCheck = error.config?.url?.startsWith('/api/auth/me')
     
     if (error.response?.status === 401 && !isAuthCheck) {
       // Handle unauthorized access - redirect to login
