@@ -14,7 +14,9 @@ router.get(
 router.get(
   '/google/callback',
   passport.authenticate('google', { 
+    // dont create session
     session: false,
+    //redirect to here
     failureRedirect: '/?error=auth_failed' 
   }),
   googleCallback

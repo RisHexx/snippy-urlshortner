@@ -6,6 +6,8 @@ const buildAnalyticsResponse = async (url) => {
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
+
+  // counts all clicks acc to daywise
   const clicksByDay = await ClickAnalytics.aggregate([
     {
       $match: {
@@ -26,7 +28,8 @@ const buildAnalyticsResponse = async (url) => {
     },
   ]);
 
-  // Fill in missing days with 0 clicks
+  // Fill in missing days with 0 clicks 
+  // The day when link got 0 clicks we need that too
   const filledClicksByDay = [];
   const currentDate = new Date(thirtyDaysAgo);
   const today = new Date();
