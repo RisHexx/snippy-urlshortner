@@ -150,6 +150,7 @@ function Analytics() {
     ? {
       labels: analytics.clicksByDay.map((d) => {
         const date = new Date(d.date)
+        // en-US -> dd/mm/yyyy and month short -> Jan and day in number so 27 JUN
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
       }),
       datasets: [

@@ -40,7 +40,7 @@ const buildAnalyticsResponse = async (url) => {
 
     filledClicksByDay.push({
       date: dateString,
-      clicks: dayData ? dayData.clicks : 0,
+      clicks: dayData ? dayData.clicks : 0, // if no click that day so do 0
     });
 
     currentDate.setDate(currentDate.getDate() + 1);

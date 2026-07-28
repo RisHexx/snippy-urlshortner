@@ -5,6 +5,7 @@ function Navbar() {
   const { user, logout } = useAuth()
   const location = useLocation()
 
+  // hilight the current active in navbar
   const isActive = (path) => location.pathname === path
 
   return (

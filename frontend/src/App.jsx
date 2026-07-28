@@ -18,6 +18,7 @@ function PrivateRoute({ children }) {
     )
   }
 
+  // replace means 
   return user ? children : <Navigate to="/" replace />
 }
 
