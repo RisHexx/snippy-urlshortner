@@ -17,8 +17,22 @@ const app = express();
 
 // Trust proxy (needed when behind nginx/reverse proxy)
 app.set('trust proxy', 1);
+
+const defaultOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+const configuredOrigins = (process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const allowedOrigins = [...new Set([...configuredOrigins, ...defaultOrigins])];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Origin ${origin} is not allowed by CORS`));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());

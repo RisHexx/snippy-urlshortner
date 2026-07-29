@@ -14,20 +14,23 @@ const generateToken = (id) => {
 const googleCallback = async (req, res) => {
   try {
     const token = generateToken(req.user._id);
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const isProduction = process.env.NODE_ENV === 'production';
 
     // Set httpOnly cookie
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    // Redirect to frontend dashboard (relative path since they share the domain)
-    res.redirect('/dashboard');
+    // Redirect back to the frontend app
+    res.redirect(`${frontendUrl}/dashboard`);
   } catch (error) {
     console.error('Google callback error:', error);
-    res.redirect('/?error=auth_failed');
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    res.redirect(`${frontendUrl}/?error=auth_failed`);
   }
 };
 
@@ -51,6 +54,8 @@ const logout = async (req, res) => {
   try {
     res.cookie('token', '', {
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       expires: new Date(0),
     });
     res.json({ message: 'Logged out successfully' });

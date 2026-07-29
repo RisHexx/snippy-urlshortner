@@ -23,7 +23,11 @@ export function AuthProvider({ children }) {
   }
 
   const login = () => {
-    window.location.href = '/api/auth/google'
+    const target = api.defaults.baseURL
+      ? `${api.defaults.baseURL}/api/auth/google`
+      : '/api/auth/google'
+
+    window.location.href = target
   }
 
   const logout = async () => {
